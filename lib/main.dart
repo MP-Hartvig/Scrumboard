@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrumboard/bloc/card_bloc.dart';
 import 'package:scrumboard/event/scrum_event.dart';
+import 'package:scrumboard/locator/scrum_card_locator.dart';
 import 'package:scrumboard/model/login.dart';
 import 'package:scrumboard/screens/home_screen.dart';
 import 'package:scrumboard/screens/local_storage_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
   runApp(const MainApp());
 }
 
@@ -57,7 +59,7 @@ class ScreenChangerState extends State<ScreenChanger> {
   @override
   Widget build(BuildContext context) {
     final CardBloc photoBloc = BlocProvider.of<CardBloc>(context);
-    Login login = Login(username: 'FlutterTester', password: 'FutterTest');
+    Login login = Login(username: 'FlutterTester', password: 'FlutterTest');
     photoBloc.add(ScrumLoginEvent(login));
 
     List<Widget> views = <Widget>[

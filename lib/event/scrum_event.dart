@@ -28,3 +28,11 @@ class ScrumUpdateEvent implements ScrumEvent {
 
   ScrumUpdateEvent(this._scrumCard);
 }
+
+class ScrumDeleteEvent implements ScrumEvent {
+  final ScrumCard _scrumCard;
+
+  ScrumCard get scrumCard => _scrumCard;
+
+  ScrumDeleteEvent(this._scrumCard);
+}

@@ -26,12 +26,12 @@ class _LocalStorageScreenState extends State<LocalStorageScreen> {
           columns: const <DataColumn>[
             DataColumn(
               label: Expanded(
-                child: Text("Image"),
+                child: Text("Title"),
               ),
             ),
             DataColumn(
               label: Expanded(
-                child: Text("Description"),
+                child: Text("Content"),
               ),
             ),
           ],

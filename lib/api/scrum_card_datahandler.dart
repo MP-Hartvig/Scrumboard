@@ -12,6 +12,7 @@ class ScrumCardDataHandler {
   HttpClient httpClient = HttpClient();
 
   Future<List<ScrumCard>> getScrumCardCollection() async {
+
     var storage = const FlutterSecureStorage();
     String? token = await storage.read(key: "token");
 
@@ -48,9 +49,15 @@ class ScrumCardDataHandler {
 
   Future<String> postLogin(Login login) async {
     httpClient = await setHttpClient();
-    var request = await httpClient.postUrl(Uri.parse(baseTokenUrl))
+    var request = await httpClient.postUrl(Uri.parse('$baseTokenUrl/login'))
       ..headers.add('Content-Type', 'application/json')
-      ..add(utf8.encode(json.encode(login.toMap())));
+      ..add(
+        utf8.encode(
+          json.encode(
+            login.toMap(),
+          ),
+        ),
+      );
     var response = await request.close();
 
     if (response.statusCode != 200) {
@@ -63,12 +70,13 @@ class ScrumCardDataHandler {
     String token = jsonDecode(responseBody)["token"];
 
     var storage = const FlutterSecureStorage();
+    storage.deleteAll();
     storage.write(key: "token", value: token);
 
     return token;
   }
 
-    Future<ScrumCard> postScrumCard(ScrumCard card) async {
+  Future<ScrumCard> postScrumCard(ScrumCard card) async {
     var storage = const FlutterSecureStorage();
     String? token = await storage.read(key: "token");
 
@@ -83,7 +91,13 @@ class ScrumCardDataHandler {
           ..headers.contentType =
               ContentType('application', 'json', charset: 'utf-8')
           ..headers.add(headers.keys.first, headers.values.first)
-          ..add(utf8.encode(json.encode(card.toMap())));
+          ..add(
+            utf8.encode(
+              json.encode(
+                card.toMap(),
+              ),
+            ),
+          );
 
     var response = await request.close();
 
@@ -106,6 +120,7 @@ class ScrumCardDataHandler {
   Future<ScrumCard> putScrumCard(ScrumCard card) async {
     var storage = const FlutterSecureStorage();
     String? token = await storage.read(key: "token");
+    String id = card.id!;
 
     if (token == null) {
       throw Exception('[ERROR] No token in secure storage');
@@ -113,12 +128,19 @@ class ScrumCardDataHandler {
 
     var headers = {"Authorization": "Bearer $token"};
     httpClient = await setHttpClient();
-    HttpClientRequest request =
-        await httpClient.putUrl(Uri.parse(baseScrumCardUrl))
-          ..headers.contentType =
-              ContentType('application', 'json', charset: 'utf-8')
-          ..headers.add(headers.keys.first, headers.values.first)
-          ..add(utf8.encode(json.encode(card.toMap())));
+    HttpClientRequest request = await httpClient.putUrl(
+      Uri.parse('$baseScrumCardUrl/$id'),
+    )
+      ..headers.contentType =
+          ContentType('application', 'json', charset: 'utf-8')
+      ..headers.add(headers.keys.first, headers.values.first)
+      ..add(
+        utf8.encode(
+          json.encode(
+            card.toMap(),
+          ),
+        ),
+      );
 
     var response = await request.close();
 
@@ -136,6 +158,31 @@ class ScrumCardDataHandler {
     local.upsertScrumCardLocal(scrumCard);
 
     return scrumCard;
+  }
+
+  Future<void> deleteScrumCard(ScrumCard card) async {
+    var storage = const FlutterSecureStorage();
+    String? token = await storage.read(key: "token");
+    String id = card.id!;
+
+    if (token == null) {
+      throw Exception('[ERROR] No token in secure storage');
+    }
+
+    var headers = {"Authorization": "Bearer $token"};
+    httpClient = await setHttpClient();
+    HttpClientRequest request =
+        await httpClient.deleteUrl(Uri.parse('$baseScrumCardUrl/$id'))
+          ..headers.contentType =
+              ContentType('application', 'json', charset: 'utf-8')
+          ..headers.add(headers.keys.first, headers.values.first);
+
+    var response = await request.close();
+
+    if (response.statusCode != 204) {
+      throw Exception(
+          '[ERROR] Failed to delete - response code: ${response.statusCode}');
+    }
   }
 
   Future<HttpClient> setHttpClient() async {

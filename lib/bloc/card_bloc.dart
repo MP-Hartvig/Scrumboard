@@ -10,9 +10,11 @@ class CardBloc extends Bloc<ScrumEvent, ScrumCardState> {
     on<ScrumCreateEvent>(_postScrumEvent);
     on<ScrumLoginEvent>(_postLoginEvent);
     on<ScrumUpdateEvent>(_putScrumEvent);
+    on<ScrumDeleteEvent>(_deleteScrumEvent);
   }
 
-  void _getScrumCardListEvent(ScrumEvent event, Emitter<ScrumCardState> emit) async {
+  void _getScrumCardListEvent(
+      ScrumEvent event, Emitter<ScrumCardState> emit) async {
     emit(ScrumCardState(state: ScrumCardStates.loading));
     final apiService = locator<ScrumCardDataHandler>();
 
@@ -25,7 +27,7 @@ class CardBloc extends Bloc<ScrumEvent, ScrumCardState> {
   }
 
   void _postScrumEvent(
-    ScrumCreateEvent event, Emitter<ScrumCardState> emit) async {
+      ScrumCreateEvent event, Emitter<ScrumCardState> emit) async {
     emit(ScrumCardState(state: ScrumCardStates.loading));
     final apiService = locator<ScrumCardDataHandler>();
 
@@ -37,7 +39,8 @@ class CardBloc extends Bloc<ScrumEvent, ScrumCardState> {
     }
   }
 
-  void _postLoginEvent(ScrumLoginEvent event, Emitter<ScrumCardState> emit) async {
+  void _postLoginEvent(
+      ScrumLoginEvent event, Emitter<ScrumCardState> emit) async {
     emit(ScrumCardState(state: ScrumCardStates.loading));
     final apiService = locator<ScrumCardDataHandler>();
 
@@ -48,12 +51,25 @@ class CardBloc extends Bloc<ScrumEvent, ScrumCardState> {
     }
   }
 
-    void _putScrumEvent(ScrumUpdateEvent event, Emitter<ScrumCardState> emit) async {
+  void _putScrumEvent(
+      ScrumUpdateEvent event, Emitter<ScrumCardState> emit) async {
     emit(ScrumCardState(state: ScrumCardStates.loading));
     final apiService = locator<ScrumCardDataHandler>();
 
     try {
       await apiService.putScrumCard(event.scrumCard);
+    } catch (e) {
+      emit(ScrumCardState(state: ScrumCardStates.error));
+    }
+  }
+
+  void _deleteScrumEvent(
+      ScrumDeleteEvent event, Emitter<ScrumCardState> emit) async {
+    emit(ScrumCardState(state: ScrumCardStates.loading));
+    final apiService = locator<ScrumCardDataHandler>();
+
+    try {
+      await apiService.deleteScrumCard(event.scrumCard);
     } catch (e) {
       emit(ScrumCardState(state: ScrumCardStates.error));
     }

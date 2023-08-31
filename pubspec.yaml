@@ -22,3 +22,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - 'assets/127.0.0.1+2-client-key.pem'
+    - 'assets/127.0.0.1+2-client.p12'
+    - 'assets/127.0.0.1+2-client.pem'

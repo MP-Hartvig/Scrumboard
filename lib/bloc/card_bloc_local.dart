@@ -13,7 +13,7 @@ class CardBlocLocal extends Bloc<ScrumEventLocal, ScrumCardLocalState> {
   void _getScrumLocalListEvent(
       ScrumEventLocal event, Emitter<ScrumCardLocalState> emit) async {
     emit(ScrumCardLocalState(state: ScrumCardLocalStates.loading));
-    final apiService = locator<ScrumCardLocalDataHandler>();
+    final apiService = locator.get<ScrumCardLocalDataHandler>();
 
     try {
       final cards = await apiService.getScrumCardLocalCollection();
@@ -26,7 +26,7 @@ class CardBlocLocal extends Bloc<ScrumEventLocal, ScrumCardLocalState> {
   void _deleteScrumLocalListEvent(
       ScrumEventLocal event, Emitter<ScrumCardLocalState> emit) async {
     emit(ScrumCardLocalState(state: ScrumCardLocalStates.loading));
-    final apiService = locator<ScrumCardLocalDataHandler>();
+    final apiService = locator.get<ScrumCardLocalDataHandler>();
 
     try {
       await apiService.deleteScrumCardLocalCollection();
