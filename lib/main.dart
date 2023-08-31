@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kanban_board/custom/board.dart';
-import 'package:kanban_board/models/inputs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scrumboard/bloc/card_bloc.dart';
+import 'package:scrumboard/event/scrum_event.dart';
+import 'package:scrumboard/model/login.dart';
+import 'package:scrumboard/screens/home_screen.dart';
+import 'package:scrumboard/screens/local_storage_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,87 +16,91 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: ScrumWidget(),
-          ),
-        ),
+    return MaterialApp(
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<CardBloc>(create: (context) => CardBloc()),
+        ],
+        child: const ScreenChanger(),
       ),
     );
   }
 }
 
-class ScrumWidget extends StatefulWidget {
-  const ScrumWidget({super.key});
+class ScreenChanger extends StatefulWidget {
+  const ScreenChanger({Key? key}) : super(key: key);
 
   @override
-  State<ScrumWidget> createState() => _ScrumWidgetState();
+  ScreenChangerState createState() => ScreenChangerState();
 }
 
-class _ScrumWidgetState extends State<ScrumWidget> {
+class ScreenChangerState extends State<ScreenChanger> {
+  int _selectedIndex = 0;
+  final GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
+
+  void _toggleDrawer() async {
+    if (scaffoldState.currentState != null) {
+      if (scaffoldState.currentState!.isDrawerOpen) {
+        scaffoldState.currentState!.openEndDrawer();
+      } else {
+        scaffoldState.currentState!.openDrawer();
+      }
+    }
+  }
+
+  void _menuChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return KanbanBoard(
-      List.generate(
-        3,
-        (index) => BoardListsData(
-          title: getHeader(index),
-          width: 250,
-          headerBackgroundColor: Color.fromARGB(255, 235, 236, 240),
-          footerBackgroundColor: Color.fromARGB(255, 235, 236, 240),
-          backgroundColor: Color.fromARGB(255, 235, 236, 240),
-          items: List.generate(
-            3,
-            (index) => Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                  )),
-              padding: const EdgeInsets.all(8.0),
-              child: Dismissible(
-                key: const Key('0'),
-                onDismissed: deleteEntry(index),
-                background: Container(
-                    color: Colors.red,
-                    child: const Icon(Icons.delete_forever_outlined)),
-                child: Text(
-                  "$index. Lorem ipsum akjwdnakwnd dawnjkda wadnkjawndkjawd awdjnwadnkjwadnwa dwa kajwdakjwd  dwa kjawdkdwk dwakadw kj dwa",
-                  softWrap: true,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+    final CardBloc photoBloc = BlocProvider.of<CardBloc>(context);
+    Login login = Login(username: 'FlutterTester', password: 'FutterTest');
+    photoBloc.add(ScrumLoginEvent(login));
+
+    List<Widget> views = <Widget>[
+      const HomeScreen(),
+      const LocalStorageScreen()
+    ];
+
+    return Scaffold(
+      key: scaffoldState,
+      appBar: AppBar(title: const Text("Scrum board")),
+      body: SafeArea(
+        child: views[_selectedIndex],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              child: Text("Menu"),
             ),
-          ),
+            ListTile(
+              title: const Text("Home screen"),
+              selected: _selectedIndex == 0,
+              onTap: () {
+                _toggleDrawer();
+                _menuChange(0);
+              },
+            ),
+            ListTile(
+              title: const Text("Local storage"),
+              selected: _selectedIndex == 1,
+              onTap: () {
+                _toggleDrawer();
+                _menuChange(1);
+              },
+            ),
+          ],
         ),
       ),
-      onItemLongPress: (cardIndex, listIndex) {},
-      onItemReorder:
-          (oldCardIndex, newCardIndex, oldListIndex, newListIndex) {},
-      onItemTap: (cardIndex, listIndex) {},
-      backgroundColor: Colors.white,
-      displacementY: 124,
-      displacementX: 100,
-      textStyle: const TextStyle(
-          fontSize: 18, color: Colors.black, fontWeight: FontWeight.w500),
     );
   }
 
-  deleteEntry(int index) {}
-
-  String getHeader(index) {
-    if (index == 2) {
-      return "Done";
-    } else if (index == 1) {
-      return "Doing";
-    } else {
-      return "To do";
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
