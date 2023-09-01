@@ -1,24 +1,28 @@
 import 'dart:convert';
-import 'dart:ffi';
 
-class ScrumCard {
-  final String? id;
+import 'package:appflowy_board/appflowy_board.dart';
+
+class ScrumCard extends AppFlowyGroupItem {
+  final String? objectId;
   final String index;
   final String title;
   final String content;
   final String scrumColumn;
 
   ScrumCard({
-    this.id,
+    this.objectId,
     required this.index,
     required this.title,
     required this.content,
     required this.scrumColumn,
   });
 
+  @override
+  String get id => objectId!;
+
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-    result.addAll({'id': id});
+    result.addAll({'id': objectId});
     result.addAll({'index': index});
     result.addAll({'title': title});
     result.addAll({'content': content});
@@ -35,7 +39,7 @@ class ScrumCard {
     String scrumColumn = json['scrumColumn'];
 
     return ScrumCard(
-        id: id,
+        objectId: id,
         index: index,
         title: title,
         content: content,

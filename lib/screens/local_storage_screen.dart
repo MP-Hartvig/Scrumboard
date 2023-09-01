@@ -20,7 +20,7 @@ class _LocalStorageScreenState extends State<LocalStorageScreen> {
     cardBlocLocal.add(ScrumGetLocalListEvent());
     return Scaffold(
       body: BlocBuilder<CardBlocLocal, ScrumCardLocalState>(
-          builder: (BuildContext draggableContext, ScrumCardLocalState state) {
+          builder: (BuildContext dataContext, ScrumCardLocalState state) {
         cardList = state.scrumCards;
         return DataTable(
           columns: const <DataColumn>[

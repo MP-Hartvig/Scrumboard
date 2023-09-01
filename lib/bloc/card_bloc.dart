@@ -13,7 +13,7 @@ class CardBloc extends Bloc<ScrumEvent, ScrumCardState> {
     on<ScrumDeleteEvent>(_deleteScrumEvent);
   }
 
-  void _getScrumCardListEvent(
+  void _getScrumCardListEvent (
       ScrumEvent event, Emitter<ScrumCardState> emit) async {
     emit(ScrumCardState(state: ScrumCardStates.loading));
     final apiService = locator<ScrumCardDataHandler>();

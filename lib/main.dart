@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrumboard/bloc/card_bloc.dart';
+import 'package:scrumboard/bloc/card_bloc_local.dart';
 import 'package:scrumboard/event/scrum_event.dart';
 import 'package:scrumboard/locator/scrum_card_locator.dart';
 import 'package:scrumboard/model/login.dart';
 import 'package:scrumboard/screens/home_screen.dart';
 import 'package:scrumboard/screens/local_storage_screen.dart';
+import 'package:scrumboard/screens/scrum_board.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +24,7 @@ class MainApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider<CardBloc>(create: (context) => CardBloc()),
+          BlocProvider<CardBlocLocal>(create: (context) => CardBlocLocal()),
         ],
         child: const ScreenChanger(),
       ),
@@ -63,7 +66,7 @@ class ScreenChangerState extends State<ScreenChanger> {
     photoBloc.add(ScrumLoginEvent(login));
 
     List<Widget> views = <Widget>[
-      const HomeScreen(),
+      const ScrumBoard(),
       const LocalStorageScreen()
     ];
 

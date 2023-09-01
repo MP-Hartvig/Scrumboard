@@ -70,8 +70,8 @@ class ScrumCardDataHandler {
     String token = jsonDecode(responseBody)["token"];
 
     var storage = const FlutterSecureStorage();
-    storage.deleteAll();
-    storage.write(key: "token", value: token);
+    await storage.deleteAll();
+    await storage.write(key: "token", value: token);
 
     return token;
   }
@@ -112,7 +112,7 @@ class ScrumCardDataHandler {
 
     final local = ScrumCardLocalDataHandler();
 
-    local.upsertScrumCardLocal(scrumCard);
+    await local.upsertScrumCardLocal(scrumCard);
 
     return ScrumCard.fromJson(json.decode(responseBody));
   }
@@ -155,7 +155,7 @@ class ScrumCardDataHandler {
 
     final local = ScrumCardLocalDataHandler();
 
-    local.upsertScrumCardLocal(scrumCard);
+    await local.upsertScrumCardLocal(scrumCard);
 
     return scrumCard;
   }

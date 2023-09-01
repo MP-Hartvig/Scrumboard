@@ -1,3 +1,4 @@
+import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban_board/custom/board.dart';
@@ -26,41 +27,60 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<ScrumCard> cardList = [];
     final CardBloc cardBloc = BlocProvider.of<CardBloc>(context);
     cardBloc.add(ScrumGetListEvent());
+    final AppFlowyBoardController controller = AppFlowyBoardController(
+      onMoveGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
+        debugPrint('Move item from $fromIndex to $toIndex');
+      },
+      onMoveGroupItem: (groupId, fromIndex, toIndex) {
+        debugPrint('Move $groupId:$fromIndex to $groupId:$toIndex');
+      },
+      onMoveGroupItemToGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
+
+      },
+    );
+
     return Scaffold(
       body: BlocBuilder<CardBloc, ScrumCardState>(
-        builder: (BuildContext kanbanContext, ScrumCardState state) {
-          cardList = state.scrumCards;
-          setKanbanContent(cardList);
-          return KanbanBoard(
-            getBoardListsData(),
-            // onItemLongPress: (cardIndex, listIndex) {
-            // },
-            onItemTap: (cardIndex, listIndex) {
-              deleteEntryDialog(cardIndex!, listIndex!);
-            },
-            onItemReorder:
-                (oldCardIndex, newCardIndex, oldListIndex, newListIndex) {
-              ScrumCard scrumCard = scrumCardParentList[oldListIndex!]
-                  .scrumCardList
-                  .removeAt(oldCardIndex!);
-
-              scrumCardParentList[newListIndex!]
-                  .scrumCardList
-                  .insert(newCardIndex!, scrumCard);
-            },
-            backgroundColor: Colors.white,
-            displacementY: 124,
-            displacementX: 100,
-          );
+        builder: (BuildContext scrumContext, ScrumCardState state) {
+          setScrumContent(state.scrumCards);
         },
       ),
     );
+
+    // return Scaffold(
+    //   body: BlocBuilder<CardBloc, ScrumCardState>(
+    //     builder: (BuildContext kanbanContext, ScrumCardState state) {
+    //       cardList = state.scrumCards;
+    //       setKanbanContent(cardList);
+    //       return KanbanBoard(
+    //         getBoardListsData(),
+    //         // onItemLongPress: (cardIndex, listIndex) {
+    //         // },
+    //         onItemTap: (cardIndex, listIndex) {
+    //           deleteEntryDialog(cardIndex!, listIndex!);
+    //         },
+    //         onItemReorder:
+    //             (oldCardIndex, newCardIndex, oldListIndex, newListIndex) {
+    //           ScrumCard scrumCard = scrumCardParentList[oldListIndex!]
+    //               .scrumCardList
+    //               .removeAt(oldCardIndex!);
+
+    //           scrumCardParentList[newListIndex!]
+    //               .scrumCardList
+    //               .insert(newCardIndex!, scrumCard);
+    //         },
+    //         backgroundColor: Colors.white,
+    //         displacementY: 124,
+    //         displacementX: 100,
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
-  setKanbanContent(List<ScrumCard> scrumCards) {
+  setScrumContent(List<ScrumCard> scrumCards) {
     for (var i = 0; i < scrumCards.length; i++) {
       if (scrumCards[i].scrumColumn == '0') {
         todo.add(scrumCards[i]);
