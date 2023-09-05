@@ -31,6 +31,16 @@ class ScrumCard extends AppFlowyGroupItem {
     return result;
   }
 
+  factory ScrumCard.fromMap(Map<String, dynamic> map) {
+    return ScrumCard(
+      objectId: map['id'] ?? '0',
+      index: map['index'] ?? '0',
+      title: map['title'] ?? '',
+      content: map['content'] ?? '',
+      scrumColumn: map['scrumColumn'] ?? '0'
+    );
+  }
+
   factory ScrumCard.fromJson(Map<String, dynamic> json) {
     String id = json['id'];
     String index = json['index'];

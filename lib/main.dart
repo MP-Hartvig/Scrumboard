@@ -5,9 +5,9 @@ import 'package:scrumboard/bloc/card_bloc_local.dart';
 import 'package:scrumboard/event/scrum_event.dart';
 import 'package:scrumboard/locator/scrum_card_locator.dart';
 import 'package:scrumboard/model/login.dart';
-import 'package:scrumboard/screens/home_screen.dart';
 import 'package:scrumboard/screens/local_storage_screen.dart';
 import 'package:scrumboard/screens/scrum_board.dart';
+// import 'package:scrumboard/screens/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
